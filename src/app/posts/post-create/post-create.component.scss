@@ -8,3 +8,8 @@ textarea {
   width: 100%;
   font-size: 1.2rem;
 }
+
+mat-form-field {
+  display: flex;
+  flex-direction: column;
+}
