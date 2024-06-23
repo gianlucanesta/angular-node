@@ -1,11 +1,7 @@
-mat-card {
-  width: 80%;
-  margin: 2em auto;
-}
-
 button {
-  margin: auto;
-  width: 400px;
+  display: flex;
+  align-self: end;
+  width: 150px;
 }
 
 textarea {
