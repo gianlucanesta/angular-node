@@ -3,6 +3,18 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "type": "shell", // Use "shell" for ng serve
+      "label": "ng serve", // Optional: Set a descriptive label
+      "command": "ng", // The Angular CLI executable
+      "args": ["serve"], // The "serve" argument for ng
+      "group": {
+        // Optional: Group with other build tasks
+        "kind": "build",
+        "isDefault": false // Not the default task
+      },
+      "problemMatcher": "$angularCLIServe" // Use the built-in problem matcher
+    },
+    {
       "type": "npm",
       "script": "start",
       "isBackground": true,
@@ -37,6 +49,13 @@
           }
         }
       }
+    },
+    {
+      "type": "deno",
+      "command": "bundle",
+      "problemMatcher": ["$deno"],
+      "group": "build",
+      "label": "deno: bundle"
     }
   ]
 }
