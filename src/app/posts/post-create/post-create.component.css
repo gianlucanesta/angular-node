@@ -1,0 +1,19 @@
+button {
+  display: flex;
+  align-self: end;
+  width: 150px;
+}
+
+textarea {
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+mat-form-field {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card {
+  padding: 1rem;
+}/*# sourceMappingURL=post-create.component.css.map */

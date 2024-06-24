@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/server",
+    "rootDir": "./",
+    "module": "commonjs",
+    "target": "es2022",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "sourceMap": true
+  },
+  "include": ["backend/**/*.ts", "server.ts"],
+  "exclude": ["node_modules"]
+}
