@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
-import Post from '../src/app/posts/post.model';
 import bodyParser from 'body-parser';
+
+const Post = require('./models/post');
 
 const app = express();
 
@@ -18,13 +19,13 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.post('/api/posts', (req: Request, res: Response, next: NextFunction) => {
-  const post: Post = req.body;
+  const post = new Post({ title: req.body.title, content: req.body.content });
   console.log(post);
   return res.status(201).json({ message: 'Post added successfully', post });
 });
 
 app.get('/api/posts', (req: Request, res: Response, next: NextFunction) => {
-  const posts: Post[] = [
+  const posts = [
     {
       id: '1',
       title: 'First Post',
