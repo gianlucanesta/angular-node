@@ -63,4 +63,10 @@ app.get(
   }
 );
 
+app.delete('/api/posts/:id', async (req: Request, res: Response) => {
+  console.log(req.params['id']);
+  await Post.deleteOne({ _id: req.params['id'] });
+  res.status(200).json({ message: 'Post deleted!' });
+});
+
 export default app;

@@ -34,20 +34,6 @@ export class PostsService {
       });
   }
 
-  // getPosts(): Observable<Post[]> {
-  //   return this.http
-  //     .get<{ message: string; posts: Post[] }>(
-  //       'http://localhost:3000/api/posts'
-  //     )
-  //     .pipe(
-  //       map((postData) => postData.posts),
-  //       tap((posts) => {
-  //         this.posts = posts;
-  //         this.postsUpdated.next([...this.posts]);
-  //       })
-  //     );
-  // }
-
   getPostUpdateListener() {
     return this.postsUpdated.asObservable();
   }
@@ -66,6 +52,16 @@ export class PostsService {
       .subscribe((responseData) => {
         console.log(responseData.message);
         this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      });
+  }
+
+  deletePost(postId: string) {
+    this.http
+      .delete('http://localhost:3000/api/posts/' + postId)
+      .subscribe(() => {
+        const updatedPosts = this.posts.filter((post) => post.id !== postId);
+        this.posts = updatedPosts;
         this.postsUpdated.next([...this.posts]);
       });
   }
