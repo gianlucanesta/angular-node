@@ -38,11 +38,9 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  nextId = 0;
-
   addPost(title: string, content: string) {
     const post: Post = {
-      id: (++this.nextId).toString(),
+      id: null,
       title,
       content,
     };

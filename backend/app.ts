@@ -3,6 +3,7 @@ require('dotenv').config();
 import bodyParser from 'body-parser';
 
 import mongoose from 'mongoose';
+import { ObjectId } from 'mongodb';
 
 const Post = require('./models/post');
 
@@ -64,9 +65,23 @@ app.get(
 );
 
 app.delete('/api/posts/:id', async (req: Request, res: Response) => {
-  console.log(req.params['id']);
-  await Post.deleteOne({ _id: req.params['id'] });
-  res.status(200).json({ message: 'Post deleted!' });
+  const postId = req.params['id'];
+
+  if (!ObjectId.isValid(postId)) {
+    return res.status(400).json({ message: 'Invalid post ID' });
+  }
+
+  try {
+    const objectId = new ObjectId(postId);
+
+    await Post.deleteOne({ _id: objectId });
+
+    console.log('Post deleted');
+    return res.status(200).json({ message: 'Post deleted!' });
+  } catch (error) {
+    console.error('Error deleting post:', error);
+    return res.status(500).json({ message: 'Failed to delete post' });
+  }
 });
 
 export default app;
