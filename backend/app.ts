@@ -1,17 +1,21 @@
 import express, { Request, Response, NextFunction } from 'express';
+require('dotenv').config();
 import bodyParser from 'body-parser';
+
+import mongoose from 'mongoose';
 
 const Post = require('./models/post');
 
 const app = express();
 
-const { client, run } = require('./mongoClient');
-
-run()
+mongoose
+  .connect(process.env['MONGODB_URI'] as string)
   .then(() => {
-    console.log('Connected to MongoDB using MongoClient');
+    console.log('Connected to MongoDB using Mongoose');
   })
-  .catch(console.dir);
+  .catch((error: any) => {
+    console.error('Error connecting to MongoDB:', error);
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -26,28 +30,37 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-app.post('/api/posts', (req: Request, res: Response, next: NextFunction) => {
-  const post = new Post({ title: req.body.title, content: req.body.content });
-  console.log(post);
-  post.save();
-  return res.status(201).json({ message: 'Post added successfully', post });
-});
+app.post(
+  '/api/posts',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const post = new Post({
+        title: req.body.title,
+        content: req.body.content,
+      });
+      console.log(post);
+      await post.save();
+      return res.status(201).json({ message: 'Post added successfully', post });
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return res.status(500).json({ message: 'Creating a post failed!' });
+    }
+  }
+);
 
-app.get('/api/posts', (req: Request, res: Response, next: NextFunction) => {
-  const posts = [
-    {
-      id: '1',
-      title: 'First Post',
-      content: 'This is the first post',
-    },
-    {
-      id: '2',
-      title: 'Second Post',
-      content: 'This is the second post',
-    },
-  ];
-
-  return res.status(200).json({ message: 'Posts fetched successfully', posts });
-});
+app.get(
+  '/api/posts',
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const posts = await Post.find();
+      return res
+        .status(200)
+        .json({ message: 'Posts fetched successfully', posts });
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      return res.status(500).json({ message: 'Fetching posts failed!' });
+    }
+  }
+);
 
 export default app;
