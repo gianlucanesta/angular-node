@@ -1,21 +1,17 @@
 import express, { Request, Response, NextFunction } from 'express';
-const dotenv = require('dotenv').config();
 import bodyParser from 'body-parser';
-const mongoose = require('mongoose');
 
 const Post = require('./models/post');
 
 const app = express();
 
-mongoose
-  .connect(process.env['MONGODB_URI'])
+const { client, run } = require('./mongoClient');
 
+run()
   .then(() => {
-    console.log('Connected to database');
+    console.log('Connected to MongoDB using MongoClient');
   })
-  .catch((error: NodeJS.ErrnoException) => {
-    console.log(error);
-  });
+  .catch(console.dir);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,6 +29,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.post('/api/posts', (req: Request, res: Response, next: NextFunction) => {
   const post = new Post({ title: req.body.title, content: req.body.content });
   console.log(post);
+  post.save();
   return res.status(201).json({ message: 'Post added successfully', post });
 });
 
