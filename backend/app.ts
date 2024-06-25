@@ -1,7 +1,11 @@
 import express, { Request, Response, NextFunction } from 'express';
 import Post from '../src/app/posts/post.model';
+import bodyParser from 'body-parser';
 
 const app = express();
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -11,6 +15,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   );
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
+});
+
+app.post('/api/posts', (req: Request, res: Response, next: NextFunction) => {
+  const post: Post = req.body;
+  console.log(post);
+  return res.status(201).json({ message: 'Post added successfully', post });
 });
 
 app.use('/api/posts', (req: Request, res: Response, next: NextFunction) => {
