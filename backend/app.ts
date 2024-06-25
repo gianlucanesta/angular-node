@@ -23,7 +23,7 @@ app.post('/api/posts', (req: Request, res: Response, next: NextFunction) => {
   return res.status(201).json({ message: 'Post added successfully', post });
 });
 
-app.use('/api/posts', (req: Request, res: Response, next: NextFunction) => {
+app.get('/api/posts', (req: Request, res: Response, next: NextFunction) => {
   const posts: Post[] = [
     {
       id: '1',
