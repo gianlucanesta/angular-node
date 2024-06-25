@@ -40,8 +40,15 @@ app.post(
         content: req.body.content,
       });
       console.log(post);
-      await post.save();
-      return res.status(201).json({ message: 'Post added successfully', post });
+      await post.save().then((createdPost: any) => {
+        res
+          .status(201)
+          .json({
+            message: 'Post added successfully',
+            postId: createdPost._id,
+          });
+      });
+      return res;
     } catch (error) {
       console.error('Error creating post:', error);
       return res.status(500).json({ message: 'Creating a post failed!' });
