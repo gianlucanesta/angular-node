@@ -1,9 +1,21 @@
 import express, { Request, Response, NextFunction } from 'express';
+const dotenv = require('dotenv').config();
 import bodyParser from 'body-parser';
+const mongoose = require('mongoose');
 
 const Post = require('./models/post');
 
 const app = express();
+
+mongoose
+  .connect(process.env['MONGODB_URI'])
+
+  .then(() => {
+    console.log('Connected to database');
+  })
+  .catch((error: NodeJS.ErrnoException) => {
+    console.log(error);
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
