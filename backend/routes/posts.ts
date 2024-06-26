@@ -53,7 +53,7 @@ router.get('', async (req: Request, res: Response, next: NextFunction) => {
 router.get('/:id', async (req: Request, res: Response) => {
   Post.findById(req.params['id']).then((post: any) => {
     if (post) {
-      return res.status(200).json({ post });
+      return res.status(200).json(post);
     }
     return res.status(404).json({ message: 'Post not found!' });
   });
