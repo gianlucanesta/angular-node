@@ -1,7 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-
 import { ObjectId } from 'mongodb';
-
 const Post = require('../models/post');
 
 const router = express.Router();
@@ -26,14 +24,14 @@ router.post('', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.put(':id', async (req: Request, res: Response) => {
+router.put('/:id', async (req: Request, res: Response) => {
   const post = new Post({
     _id: req.body.id,
     title: req.body.title,
     content: req.body.content,
   });
   Post.updateOne({ _id: req.params['id'] }, post).then((result: any) => {
-    console.log(result);
+    console.log('result: ', result);
     res.status(200).json({
       message: 'Post updated successfully',
     });
@@ -52,7 +50,16 @@ router.get('', async (req: Request, res: Response, next: NextFunction) => {
   }
 });
 
-router.delete(':id', async (req: Request, res: Response) => {
+router.get('/:id', async (req: Request, res: Response) => {
+  Post.findById(req.params['id']).then((post: any) => {
+    if (post) {
+      return res.status(200).json({ post });
+    }
+    return res.status(404).json({ message: 'Post not found!' });
+  });
+});
+
+router.delete('/:id', async (req: Request, res: Response) => {
   const postId = req.params['id'];
 
   if (!ObjectId.isValid(postId)) {
@@ -64,7 +71,6 @@ router.delete(':id', async (req: Request, res: Response) => {
 
     await Post.deleteOne({ _id: objectId });
 
-    console.log('Post deleted');
     return res.status(200).json({ message: 'Post deleted!' });
   } catch (error) {
     console.error('Error deleting post:', error);
