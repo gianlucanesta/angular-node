@@ -5,7 +5,7 @@
     </mat-expansion-panel-header>
     <mat-panel-description>{{ post.content }}</mat-panel-description>
     <mat-action-row>
-      <button mat-button color="primary">EDIT</button>
+      <a mat-button color="primary" [routerLink]="['/edit', post.id]">EDIT</a>
       <button mat-button color="warn" class="ml-2" (click)="onDelete(post.id!)">
         CANCEL
       </button>
@@ -13,4 +13,6 @@
   </mat-expansion-panel>
 </mat-accordion>
 
-<p else class="info-text mat-body-1">No posts added yet!</p>
+<p *ngIf="posts.length <= 0" class="info-text mat-body-1">
+  No posts added yet!
+</p>
