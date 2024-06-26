@@ -41,12 +41,10 @@ app.post(
       });
       console.log(post);
       await post.save().then((createdPost: any) => {
-        res
-          .status(201)
-          .json({
-            message: 'Post added successfully',
-            postId: createdPost._id,
-          });
+        res.status(201).json({
+          message: 'Post added successfully',
+          postId: createdPost._id,
+        });
       });
       return res;
     } catch (error) {
@@ -55,6 +53,20 @@ app.post(
     }
   }
 );
+
+app.put('/api/posts/:id', async (req: Request, res: Response) => {
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content,
+  });
+  Post.updateOne({ _id: req.params['id'] }, post).then((result: any) => {
+    console.log(result);
+    res.status(200).json({
+      message: 'Post updated successfully',
+    });
+  });
+});
 
 app.get(
   '/api/posts',
