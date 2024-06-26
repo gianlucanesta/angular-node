@@ -4,7 +4,7 @@
       <mat-label>Title</mat-label>
       <input
         matInput
-        [ngModel]="post.title"
+        [ngModel]="post?.title"
         required
         minlength="3"
         name="title"
@@ -20,7 +20,7 @@
       <textarea
         matInput
         rows="6"
-        [ngModel]="post.content"
+        [ngModel]="post?.content"
         required
         name="content"
         #content="ngModel"
