@@ -6,8 +6,11 @@
   >
     <mat-icon>menu</mat-icon>
   </button>
-  <span>Angular/Node</span>
-  <li><a routerLink="/create">My Messages</a></li>
-  <li><a routerLink="/create">New Post</a></li>
-  <span class="example-spacer"></span>
+  <span><a routerLink="/">My Messages</a></span>
+  <span class="spacer"></span>
+  <ul>
+    <li>
+      <a mat-button routerLink="/create" routerLinkActive="active">New Post</a>
+    </li>
+  </ul>
 </mat-toolbar>
