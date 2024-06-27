@@ -4,6 +4,7 @@ import bodyParser from 'body-parser';
 
 import mongoose from 'mongoose';
 
+
 const postsRoutes = require('./routes/posts');
 
 const app = express();

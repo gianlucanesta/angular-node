@@ -1,28 +1,68 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { ObjectId } from 'mongodb';
+import multer from 'multer';
+import fs from 'fs';
+import path from 'path';
+
 const Post = require('../models/post');
+
+const imageUploadDir = path.join(__dirname, 'backend/images');
+
+if (!fs.existsSync(imageUploadDir)) {
+  fs.mkdirSync(imageUploadDir, { recursive: true });
+}
+
+const MIME_TYPES_MAP = {
+  'image/png': 'png',
+  'image/jpg': 'jpg',
+  'image/jpeg': 'jpeg',
+};
+
+const fileStorage = multer.diskStorage({
+  destination: (req: Request, file: any, cb: any) => {
+    const isValid =
+      MIME_TYPES_MAP[file.mimetype as keyof typeof MIME_TYPES_MAP];
+
+    let error: Error | null = new Error('Invalid mime type');
+    if (isValid) {
+      error = null;
+    }
+    cb(error, imageUploadDir);
+  },
+  filename: (req: Request, file: any, cb: any) => {
+    const sanitizedFilename =
+      new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
+    cb(null, sanitizedFilename);
+  },
+});
 
 const router = express.Router();
 
-router.post('', async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const post = new Post({
-      title: req.body.title,
-      content: req.body.content,
-    });
-    console.log(post);
-    await post.save().then((createdPost: any) => {
-      res.status(201).json({
-        message: 'Post added successfully',
-        postId: createdPost._id,
+router.use('/images', express.static(imageUploadDir));
+
+router.post(
+  '',
+  multer({ storage: fileStorage }).single('image'),
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const post = new Post({
+        title: req.body.title,
+        content: req.body.content,
       });
-    });
-    return res;
-  } catch (error) {
-    console.error('Error creating post:', error);
-    return res.status(500).json({ message: 'Creating a post failed!' });
+      console.log(post);
+      await post.save().then((createdPost: any) => {
+        res.status(201).json({
+          message: 'Post added successfully',
+          postId: createdPost._id,
+        });
+      });
+      return res;
+    } catch (error) {
+      console.error('Error creating post:', error);
+      return res.status(500).json({ message: 'Creating a post failed!' });
+    }
   }
-});
+);
 
 router.put('/:id', async (req: Request, res: Response) => {
   const post = new Post({
