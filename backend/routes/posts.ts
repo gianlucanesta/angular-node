@@ -56,15 +56,20 @@ router.post(
       return res.status(400).json({ message: 'Image upload failed' });
     }
     try {
+      const url = req.protocol + '://' + req.get('host');
       const post = new Post({
         title: req.body.title,
         content: req.body.content,
+        imagePath: url + '/images/' + req.file.filename,
       });
       console.log(post);
       await post.save().then((createdPost: any) => {
         res.status(201).json({
           message: 'Post added successfully',
-          postId: createdPost._id,
+          post: {
+            ...createdPost,
+            id: createdPost._id,
+          },
         });
       });
       return res;
