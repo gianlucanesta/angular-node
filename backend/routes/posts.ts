@@ -6,7 +6,12 @@ import path from 'path';
 
 const Post = require('../models/post');
 
-const imageUploadDir = path.join(__dirname, 'backend/images');
+const imageUploadDir = path.resolve(
+  process.cwd(),
+  'dist/server/backend/images'
+);
+
+console.log('Image upload directory:', imageUploadDir);
 
 if (!fs.existsSync(imageUploadDir)) {
   fs.mkdirSync(imageUploadDir, { recursive: true });
@@ -27,11 +32,13 @@ const fileStorage = multer.diskStorage({
     if (isValid) {
       error = null;
     }
+    console.log('Storing file in:', imageUploadDir); // Aggiungi questo log
     cb(error, imageUploadDir);
   },
   filename: (req: Request, file: any, cb: any) => {
     const sanitizedFilename =
       new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
+    console.log('Filename:', sanitizedFilename); // Aggiungi questo log
     cb(null, sanitizedFilename);
   },
 });
@@ -44,6 +51,10 @@ router.post(
   '',
   multer({ storage: fileStorage }).single('image'),
   async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.file) {
+      console.log('File not uploaded'); // Log per verificare se il file è stato caricato
+      return res.status(400).json({ message: 'Image upload failed' });
+    }
     try {
       const post = new Post({
         title: req.body.title,
