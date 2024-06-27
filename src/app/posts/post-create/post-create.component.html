@@ -1,17 +1,14 @@
 <mat-card>
   <mat-spinner *ngIf="isLoading"></mat-spinner>
-  <form (submit)="onSavePost(postForm)" #postForm="ngForm">
+  <form [formGroup]="form" (submit)="onSavePost()">
     <mat-form-field>
       <mat-label>Title</mat-label>
-      <input
-        matInput
-        [ngModel]="post?.title"
-        required
-        minlength="3"
-        name="title"
-        #title="ngModel"
-      />
-      <mat-error *ngIf="title.invalid && (title.dirty || title.touched)"
+      <input matInput type="text" formControlName="title" />
+      <mat-error
+        *ngIf="
+          form.get('title')?.invalid &&
+          (form.get('title')?.dirty || form.get('title')?.touched)
+        "
         >Please enter a post title</mat-error
       >
     </mat-form-field>
@@ -29,19 +26,21 @@
       <textarea
         matInput
         rows="6"
-        [ngModel]="post?.content"
-        required
         name="content"
-        #content="ngModel"
+        formControlName="content"
       ></textarea>
-      <mat-error *ngIf="content.invalid && (content.dirty || content.touched)"
+      <mat-error
+        *ngIf="
+          form.get('content')?.invalid &&
+          (form.get('content')?.dirty || form.get('content')?.touched)
+        "
         >Please enter a post content</mat-error
       >
     </mat-form-field>
     <button
       mat-raised-button
       color="primary"
-      [disabled]="!postForm.valid"
+      [disabled]="!form.valid"
       type="submit"
     >
       Save Post
