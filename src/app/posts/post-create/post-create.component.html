@@ -15,6 +15,14 @@
         >Please enter a post title</mat-error
       >
     </mat-form-field>
+
+    <div class="mb-1">
+      <button mat-stroked-button (click)="filePicker.click()">
+        Pick Image
+      </button>
+      <input type="file" #filePicker />
+    </div>
+
     <mat-form-field>
       <mat-label>Content</mat-label>
 
