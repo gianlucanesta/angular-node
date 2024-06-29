@@ -110,23 +110,45 @@ router.get('/:id', async (req: Request, res: Response) => {
   });
 });
 
-router.delete('/:id', async (req: Request, res: Response) => {
-  const postId = req.params['id'];
+router.delete(
+  '/:id',
+  async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params['id'];
 
-  if (!ObjectId.isValid(postId)) {
-    return res.status(400).json({ message: 'Invalid post ID' });
+    if (!ObjectId.isValid(postId)) {
+      return res.status(400).json({ message: 'Invalid post ID' });
+    }
+
+    try {
+      const post = await Post.findById(postId);
+
+      if (!post) {
+        return res.status(404).json({ message: 'Post not found!' });
+      }
+
+      // Elimina l'immagine dal filesystem
+      clearImage(path.basename(post.imagePath));
+
+      // Elimina il documento del post dal database
+      await Post.deleteOne({ _id: post._id });
+
+      return res.status(200).json({ message: 'Post and image deleted!' });
+    } catch (error) {
+      console.error('Error deleting post:', error);
+      return res.status(500).json({ message: 'Failed to delete post' });
+    }
   }
+);
 
-  try {
-    const objectId = new ObjectId(postId);
-
-    await Post.deleteOne({ _id: objectId });
-
-    return res.status(200).json({ message: 'Post deleted!' });
-  } catch (error) {
-    console.error('Error deleting post:', error);
-    return res.status(500).json({ message: 'Failed to delete post' });
-  }
-});
+const clearImage = (filePath: string) => {
+  filePath = path.join(__dirname, '../../../../backend/images', filePath);
+  fs.unlink(filePath, (err) => {
+    if (err) {
+      console.error('Error deleting image:', err);
+    } else {
+      console.log(`Deleted image: ${filePath}`);
+    }
+  });
+};
 
 module.exports = router;
