@@ -37,6 +37,7 @@ export class PostCreateComponent implements OnInit {
         asyncValidators: [mimeType],
       }),
     });
+
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
         this.mode = 'edit';
@@ -48,13 +49,19 @@ export class PostCreateComponent implements OnInit {
             id: postData._id,
             title: postData.title,
             content: postData.content,
-            imagePath: null,
+            imagePath: postData.imagePath,
           };
 
-          this.form.setValue({
+          // Inizializza il form con i valori del post
+          this.form.patchValue({
             title: this.post.title,
             content: this.post.content,
           });
+
+          // Mostra l'anteprima dell'immagine se presente
+          if (this.post.imagePath) {
+            this.imagePreview = this.post.imagePath;
+          }
         });
       } else {
         this.mode = 'create';
@@ -62,30 +69,6 @@ export class PostCreateComponent implements OnInit {
       }
     });
   }
-
-  // onSavePost() {
-  //   if (this.form.invalid) {
-  //     return;
-  //   }
-
-  //   this.isLoading = true;
-  //   if (this.mode === 'create') {
-  //     console.log('form value', this.form.value);
-  //     this.postsService.addPost(
-  //       this.form.value.title,
-  //       this.form.value.content,
-  //       this.form.value.image
-  //     );
-  //   } else {
-  //     this.postsService.updatePost(
-  //       this.postId!,
-  //       this.form.value.title,
-  //       this.form.value.content
-  //     );
-  //   }
-
-  //   this.form.reset();
-  // }
 
   onSavePost() {
     if (this.form.invalid) {
@@ -97,15 +80,19 @@ export class PostCreateComponent implements OnInit {
     const image = this.form.value.image;
 
     const postData = new FormData();
+    postData.append('id', this.postId || '');
     postData.append('title', title);
     postData.append('content', content);
+    console.log('image istanceof', image instanceof File);
+
     postData.append('image', image, image.name);
 
     if (this.mode === 'create') {
       this.postsService.addPost(title, content, postData);
       console.log('addPost');
     } else {
-      this.postsService.updatePost(this.postId!, title, content);
+      this.postsService.updatePost(this.postId!, title, content, image);
+      console.log('image', image);
       console.log('updatePost');
     }
 

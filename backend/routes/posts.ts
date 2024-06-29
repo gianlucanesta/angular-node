@@ -75,19 +75,31 @@ router.post(
   }
 );
 
-router.put('/:id', async (req: Request, res: Response) => {
-  const post = new Post({
-    _id: req.body.id,
-    title: req.body.title,
-    content: req.body.content,
-  });
-  Post.updateOne({ _id: req.params['id'] }, post).then((result: any) => {
-    console.log('result: ', result);
-    res.status(200).json({
-      message: 'Post updated successfully',
+router.put(
+  '/:id',
+  upload.single('image'),
+  async (req: Request, res: Response) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + '://' + req.get('host');
+      const images = '/backend/images/';
+      imagePath = url + images + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
     });
-  });
-});
+    console.log('post', post);
+    Post.updateOne({ _id: req.params['id'] }, post).then((result: any) => {
+      console.log('result: ', result);
+      res.status(200).json({
+        message: 'Post updated successfully',
+      });
+    });
+  }
+);
 
 router.get('', async (req: Request, res: Response, next: NextFunction) => {
   try {

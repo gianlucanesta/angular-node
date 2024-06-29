@@ -26,10 +26,7 @@
       />
     </div>
 
-    <div
-      class="image-preview"
-      *ngIf="imagePreview !== '' && imagePreview && form.get('image')?.valid"
-    >
+    <div class="image-preview" *ngIf="imagePreview !== '' && imagePreview">
       <img [src]="imagePreview" [alt]="form.get('title')?.value" />
     </div>
 
