@@ -1,9 +1,24 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import express from 'express';
 import debug from 'debug';
 import http from 'http';
 const app = require('./backend/app').default;
+
+const path = require('path');
+
+const imagePath = path.join(__dirname, '../../backend/images');
+
+// app.use('/backend/images', (req: any, res: any, next: any) => {
+//   console.log(`Request URL: ${req.url}`);
+//   console.log(`Request Path: ${req.path}`);
+//   console.log(`Serving static file from: ${imagePath}`);
+//   next();
+// });
+
+// Configurazione del middleware statico
+app.use('/backend/images', express.static(imagePath));
 
 const normalizePort = (val: string | number): number | string | boolean => {
   const port: number = typeof val === 'string' ? parseInt(val, 10) : val;

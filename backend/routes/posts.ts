@@ -6,61 +6,56 @@ import path from 'path';
 
 const Post = require('../models/post');
 
-const imageUploadDir = path.resolve(
-  process.cwd(),
-  'dist/server/backend/images'
-);
-
-console.log('Image upload directory:', imageUploadDir);
-
-if (!fs.existsSync(imageUploadDir)) {
-  fs.mkdirSync(imageUploadDir, { recursive: true });
-}
-
-const MIME_TYPES_MAP = {
+const MIME_TYPE_MAP: { [key: string]: string } = {
   'image/png': 'png',
+  'image/jpeg': 'jpg',
   'image/jpg': 'jpg',
-  'image/jpeg': 'jpeg',
 };
 
-const fileStorage = multer.diskStorage({
-  destination: (req: Request, file: any, cb: any) => {
-    const isValid =
-      MIME_TYPES_MAP[file.mimetype as keyof typeof MIME_TYPES_MAP];
-
-    let error: Error | null = new Error('Invalid mime type');
-    if (isValid) {
-      error = null;
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const dir = path.join(__dirname, '../../../../backend/images');
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
-    console.log('Storing file in:', imageUploadDir); // Aggiungi questo log
-    cb(error, imageUploadDir);
+    cb(null, dir);
   },
-  filename: (req: Request, file: any, cb: any) => {
-    const sanitizedFilename =
-      new Date().toISOString().replace(/:/g, '-') + '-' + file.originalname;
-    console.log('Filename:', sanitizedFilename); // Aggiungi questo log
-    cb(null, sanitizedFilename);
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(' ').join('-');
+    const ext = MIME_TYPE_MAP[file.mimetype];
+    cb(null, `${name}-${Date.now()}.${ext}`);
   },
 });
 
+const upload = multer({ storage: storage });
+
 const router = express.Router();
 
-router.use('/images', express.static(imageUploadDir));
+// Verifica permessi di lettura
+const imagePath = path.join(__dirname, '../../../../backend/images');
+fs.access(imagePath, fs.constants.R_OK, (err) => {
+  if (err) {
+    console.error(`No read access to ${imagePath}`);
+  } else {
+    console.log(`Read access to ${imagePath} confirmed`);
+  }
+});
 
 router.post(
   '',
-  multer({ storage: fileStorage }).single('image'),
+  upload.single('image'),
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file) {
-      console.log('File not uploaded'); // Log per verificare se il file è stato caricato
+      console.log('File not uploaded');
       return res.status(400).json({ message: 'Image upload failed' });
     }
     try {
       const url = req.protocol + '://' + req.get('host');
+      const images = '/backend/images/';
       const post = new Post({
         title: req.body.title,
         content: req.body.content,
-        imagePath: url + '/images/' + req.file.filename,
+        imagePath: url + images + req.file.filename,
       });
       console.log(post);
       await post.save().then((createdPost: any) => {

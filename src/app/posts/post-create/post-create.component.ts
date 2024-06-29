@@ -63,39 +63,68 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
+  // onSavePost() {
+  //   if (this.form.invalid) {
+  //     return;
+  //   }
+
+  //   this.isLoading = true;
+  //   if (this.mode === 'create') {
+  //     console.log('form value', this.form.value);
+  //     this.postsService.addPost(
+  //       this.form.value.title,
+  //       this.form.value.content,
+  //       this.form.value.image
+  //     );
+  //   } else {
+  //     this.postsService.updatePost(
+  //       this.postId!,
+  //       this.form.value.title,
+  //       this.form.value.content
+  //     );
+  //   }
+
+  //   this.form.reset();
+  // }
+
   onSavePost() {
     if (this.form.invalid) {
       return;
     }
 
-    this.isLoading = true;
+    const title = this.form.value.title;
+    const content = this.form.value.content;
+    const image = this.form.value.image;
+
+    const postData = new FormData();
+    postData.append('title', title);
+    postData.append('content', content);
+    postData.append('image', image, image.name);
+
     if (this.mode === 'create') {
-      this.postsService.addPost(
-        this.form.value.title,
-        this.form.value.content,
-        this.form.value.image
-      );
+      this.postsService.addPost(title, content, postData);
+      console.log('addPost');
     } else {
-      this.postsService.updatePost(
-        this.postId!,
-        this.form.value.title,
-        this.form.value.content
-      );
+      this.postsService.updatePost(this.postId!, title, content);
+      console.log('updatePost');
     }
 
     this.form.reset();
   }
 
   onImagePicked(event: Event) {
-    const file = (event.target as HTMLInputElement).files![0];
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+    const file = input.files[0];
     this.form.patchValue({ image: file });
     this.form.get('image')?.updateValueAndValidity();
-
     const reader = new FileReader();
+
     reader.onload = () => {
       this.imagePreview = reader.result as string;
     };
-
     reader.readAsDataURL(file);
   }
 }

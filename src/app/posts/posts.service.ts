@@ -24,6 +24,7 @@ export class PostsService {
               title: post.title,
               content: post.content,
               id: post._id,
+              imagePath: post.imagePath,
             };
           });
         })
@@ -40,33 +41,39 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string; title: string; content: string }>(
-      'http://localhost:3000/api/posts/' + id
-    );
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+    }>('http://localhost:3000/api/posts/' + id);
   }
 
-  addPost(title: string, content: string, image: File) {
-    const postData = new FormData();
-    postData.append('title', title);
-    postData.append('content', content);
-    postData.append('image', image, title);
-
+  addPost(title: string, content: string, postData: FormData) {
     this.http
-      .post<{ message: string; post: Post }>(
+      .post<{ message: string; post: any }>(
         'http://localhost:3000/api/posts',
         postData
       )
-      .subscribe((responseData) => {
-        const post: Post = {
-          id: responseData.post.id,
-          title: title,
-          content: content,
-          imagePath: responseData.post.imagePath,
-        };
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
-        this.router.navigate(['/']);
-      });
+      .subscribe(
+        (responseData) => {
+          // console.log('responseData', responseData.post._doc.imagePath);
+          const post = {
+            id: responseData.post.id,
+            title: title,
+            content: content,
+            imagePath: responseData.post._doc.imagePath,
+          };
+          console.log('post', post);
+          this.posts.push(post);
+          this.postsUpdated.next([...this.posts]);
+          this.router.navigate(['/']);
+        },
+        (error) => {
+          // Gestisci gli errori
+          console.error('Error adding post:', error);
+        }
+      );
   }
 
   updatePost(id: string, title: string, content: string) {

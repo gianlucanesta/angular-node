@@ -17,7 +17,13 @@
       <button mat-stroked-button (click)="filePicker.click()">
         Pick Image
       </button>
-      <input type="file" #filePicker (change)="onImagePicked($event)" />
+      <input
+        type="file"
+        name="image"
+        #filePicker
+        (change)="onImagePicked($event)"
+        enctype="multipart/form-data"
+      />
     </div>
 
     <div
