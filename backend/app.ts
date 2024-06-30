@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import mongoose from 'mongoose';
 
 const postsRoutes = require('./routes/posts');
+const userRoutes = require('./routes/user');
 
 const app = express();
 
@@ -33,5 +34,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 app.use('/api/posts', postsRoutes);
+app.use('/api/user', userRoutes);
 
 export default app;
