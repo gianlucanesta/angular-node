@@ -116,23 +116,54 @@ router.put(
   }
 );
 
+// router.get('', async (req: Request, res: Response, next: NextFunction) => {
+//   try {
+//     const pageSize = +req.query['pageSize']!;
+//     const currentPage = +req.query['currentPage']!;
+//     const postQuery = Post.find();
+//     let fetchedPosts: any;
+//     if (pageSize && currentPage) {
+//       const posts = await postQuery
+//         .skip((currentPage - 1) * pageSize)
+//         .limit(pageSize);
+//       return res
+//         .status(200)
+//         .json({ message: 'Posts fetched successfully', posts });
+//     }
+//     postQuery.then((documents: any) => {
+//       return Post.count().then((count: any) => {
+//         return res.status(200).json({
+//           message: 'Posts fetched successfully',
+//           posts: fetchedPosts,
+//           maxPosts: count,
+//         });
+//       });
+//     });
+//   } catch (error) {
+//     console.error('Error fetching posts:', error);
+//     return res.status(500).json({ message: 'Fetching posts failed!' });
+//   }
+// });
+
 router.get('', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const pageSize = +req.query['pageSize']!;
     const currentPage = +req.query['currentPage']!;
     const postQuery = Post.find();
+    let fetchedPosts: any;
     if (pageSize && currentPage) {
-      const posts = await postQuery
+      fetchedPosts = await postQuery
         .skip((currentPage - 1) * pageSize)
         .limit(pageSize);
-      return res
-        .status(200)
-        .json({ message: 'Posts fetched successfully', posts });
+    } else {
+      fetchedPosts = await postQuery;
     }
-    const posts = await postQuery;
-    return res
-      .status(200)
-      .json({ message: 'Posts fetched successfully', posts });
+    const count = await Post.countDocuments();
+    return res.status(200).json({
+      message: 'Posts fetched successfully',
+      posts: fetchedPosts,
+      maxPosts: count,
+    });
   } catch (error) {
     console.error('Error fetching posts:', error);
     return res.status(500).json({ message: 'Fetching posts failed!' });
