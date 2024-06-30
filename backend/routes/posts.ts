@@ -85,19 +85,34 @@ router.put(
       const images = '/backend/images/';
       imagePath = url + images + req.file.filename;
     }
-    const post = new Post({
-      _id: req.body.id,
-      title: req.body.title,
-      content: req.body.content,
-      imagePath: imagePath,
-    });
-    console.log('post', post);
-    Post.updateOne({ _id: req.params['id'] }, post).then((result: any) => {
-      console.log('result: ', result);
-      res.status(200).json({
+
+    try {
+      // Cerca il post esistente
+      const existingPost = await Post.findById(req.params['id']);
+
+      // Se il post esiste e ha un'immagine, elimina l'immagine
+      if (existingPost && existingPost.imagePath) {
+        clearImage(path.basename(existingPost.imagePath));
+      }
+
+      // Crea il nuovo post
+      const post = new Post({
+        _id: req.body.id,
+        title: req.body.title,
+        content: req.body.content,
+        imagePath: imagePath,
+      });
+
+      // Aggiorna il post nel database
+      await Post.updateOne({ _id: req.params['id'] }, post);
+
+      return res.status(200).json({
         message: 'Post updated successfully',
       });
-    });
+    } catch (error) {
+      console.error('Error updating post:', error);
+      return res.status(500).json({ message: 'Updating post failed!' });
+    }
   }
 );
 

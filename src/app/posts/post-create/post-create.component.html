@@ -47,13 +47,8 @@
         >Please enter a post content</mat-error
       >
     </mat-form-field>
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="!form.valid"
-      type="submit"
-    >
-      Save Post
+    <button mat-raised-button color="primary" type="submit">
+      {{ mode === "create" ? "Save Post" : "Update Post" }}
     </button>
   </form>
 </mat-card>
