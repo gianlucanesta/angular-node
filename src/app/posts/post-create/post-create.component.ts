@@ -83,17 +83,17 @@ export class PostCreateComponent implements OnInit {
     postData.append('id', this.postId || '');
     postData.append('title', title);
     postData.append('content', content);
-    console.log('image istanceof', image instanceof File);
+    // console.log('image istanceof', image instanceof File);
 
     postData.append('image', image, image.name);
 
     if (this.mode === 'create') {
       this.postsService.addPost(title, content, postData);
-      console.log('addPost');
+      // console.log('addPost');
     } else {
       this.postsService.updatePost(this.postId!, title, content, image);
       console.log('image', image);
-      console.log('updatePost');
+      // console.log('updatePost');
     }
 
     this.form.reset();

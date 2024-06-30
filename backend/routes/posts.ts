@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
+const isAuth = require('../middleware/is-auth');
 
 const Post = require('../models/post');
 
@@ -43,6 +44,7 @@ const router = express.Router();
 
 router.post(
   '',
+  isAuth,
   upload.single('image'),
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.file) {
@@ -77,6 +79,7 @@ router.post(
 
 router.put(
   '/:id',
+  isAuth,
   upload.single('image'),
   async (req: Request, res: Response) => {
     let imagePath = req.body.imagePath;
@@ -152,6 +155,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 
 router.delete(
   '/:id',
+  isAuth,
   async (req: Request, res: Response, next: NextFunction) => {
     const postId = req.params['id'];
 
