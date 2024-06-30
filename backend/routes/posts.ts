@@ -118,7 +118,18 @@ router.put(
 
 router.get('', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const posts = await Post.find();
+    const pageSize = +req.query['pageSize']!;
+    const currentPage = +req.query['currentPage']!;
+    const postQuery = Post.find();
+    if (pageSize && currentPage) {
+      const posts = await postQuery
+        .skip((currentPage - 1) * pageSize)
+        .limit(pageSize);
+      return res
+        .status(200)
+        .json({ message: 'Posts fetched successfully', posts });
+    }
+    const posts = await postQuery;
     return res
       .status(200)
       .json({ message: 'Posts fetched successfully', posts });
