@@ -7,8 +7,9 @@ router.post('/signup', (req: Request, res: Response, next: NextFunction) => {
   bcrypt.hash(req.body.password, 10).then(async (hash: any) => {
     const user = new User({
       email: req.body.email,
-      password: req.body.password,
+      password: hash,
     });
+    console.log('user', user);
     await user
       .save()
       .then(() => {

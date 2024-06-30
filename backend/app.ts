@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 require('dotenv').config();
 import bodyParser from 'body-parser';
+const cors = require('cors');
 
 import mongoose from 'mongoose';
 
@@ -21,8 +22,6 @@ mongoose
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use('/dist/server/backend/images', express.static('images'));
-
 app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader(
@@ -32,6 +31,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   next();
 });
+
+app.use(cors());
 
 app.use('/api/posts', postsRoutes);
 app.use('/api/user', userRoutes);
