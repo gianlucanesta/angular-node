@@ -3,32 +3,37 @@
   <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
     <mat-form-field>
       <mat-label>Email</mat-label>
-      <input matInput ngModel name="email" type="email" #emailInput="ngModel" />
+      <input
+        matInput
+        ngModel
+        name="email"
+        type="email"
+        #emailInput="ngModel"
+        required
+        email
+      />
       <mat-error
-        *ngIf="(emailInput.invalid && emailInput.dirty) || emailInput.touched"
+        *ngIf="emailInput.invalid && (emailInput.dirty || emailInput.touched)"
         >Please enter a valid e-mail</mat-error
       >
     </mat-form-field>
 
     <mat-form-field>
       <mat-label>Password</mat-label>
-
       <input
         matInput
         ngModel
         type="password"
         name="password"
         #passwordInput="ngModel"
+        required
+        minlength="6"
       />
       <mat-error
-        *ngIf="
-          (passwordInput.invalid && passwordInput.dirty) ||
-          passwordInput.touched
-        "
-        >Please enter a valid password</mat-error
-      >
+        *ngIf="passwordInput.invalid && (passwordInput.dirty || passwordInput.touched)"
+        >Please enter a valid password (at least 6 characters)</mat-error>
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" *ngIf="!isLoading">Signup</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="signupForm.invalid" *ngIf="!isLoading">Signup</button>
   </form>
 </mat-card>
 <mat-spinner *ngIf="isLoading"></mat-spinner>
