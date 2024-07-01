@@ -1,7 +1,10 @@
+import { NextFunction, Response, Request } from 'express';
+
 const jwt = require('jsonwebtoken');
+
 require('dotenv').config();
 
-module.exports = (req: any, res: any, next: any) => {
+module.exports = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {
     const error: any = new Error('Not authenticated.');
@@ -23,5 +26,9 @@ module.exports = (req: any, res: any, next: any) => {
     throw error;
   }
   req.userId = decodedToken.userId;
+  req.userData = { email: decodedToken.email, userId: decodedToken.userId };
+  // console.log('req.userData', req.userData);
+  // console.log('decodedToken', decodedToken);
+
   next();
 };

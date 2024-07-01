@@ -54,13 +54,15 @@ router.post(
     try {
       const url = req.protocol + '://' + req.get('host');
       const images = '/backend/images/';
+      console.log(req.userData);
       const post = new Post({
         title: req.body.title,
         content: req.body.content,
         imagePath: url + images + req.file.filename,
+        creator: req.userData!.userId,
       });
-      console.log(post);
-      await post.save().then((createdPost: any) => {
+
+      post.save().then((createdPost: any) => {
         res.status(201).json({
           message: 'Post added successfully',
           post: {
