@@ -10,7 +10,7 @@
     <mat-panel-description>
       <div>{{ post.content }}</div>
     </mat-panel-description>
-    <mat-action-row>
+    <mat-action-row *ngIf="userIsAuthenticated">
       <a mat-button color="primary" [routerLink]="['/edit', post.id]">EDIT</a>
       <button mat-button color="warn" class="ml-2" (click)="onDelete(post.id!)">
         CANCEL
