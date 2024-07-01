@@ -63,5 +63,10 @@ export class AuthService {
     this.token = '';
     this.isAuthenticated = false;
     this.authStatusListener.next(false);
+    this.router.navigate(['/']).then(() => {
+      console.log('Navigated to home');
+    }).catch(error => {
+      console.error('Navigation error:', error);
+    });
   }
 }
