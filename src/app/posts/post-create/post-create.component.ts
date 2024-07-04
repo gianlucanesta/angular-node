@@ -91,6 +91,10 @@ export class PostCreateComponent implements OnInit {
       this.postsService.addPost(title, content, postData);
       // console.log('addPost');
     } else {
+      let image: File | string = this.post.imagePath!;
+      if (this.form.value.image) {
+        image = this.form.value.image;
+      }
       this.postsService.updatePost(this.postId!, title, content, image);
       console.log('image', image);
       // console.log('updatePost');

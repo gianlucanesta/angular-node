@@ -25,7 +25,16 @@ export class PostListComponent implements OnInit, OnDestroy {
   private postsSub!: Subscription;
   private authStatusSub!: Subscription;
 
-  constructor(public postsService: PostsService, private authService: AuthService) {}
+  constructor(
+    public postsService: PostsService,
+    private authService: AuthService
+  ) {
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe((isAuthenticated) => {
+        this.userIsAuthenticated = isAuthenticated;
+      });
+  }
 
   ngOnInit() {
     this.isLoading = true;
@@ -36,22 +45,24 @@ export class PostListComponent implements OnInit, OnDestroy {
       .subscribe((postData: { posts: Post[]; postCount: number }) => {
         this.isLoading = false;
         this.totalPosts = postData.postCount;
-        console.log('totalPosts: ', this.totalPosts);
+        // console.log('totalPosts: ', this.totalPosts);
         this.posts = postData.posts;
         // console.log('posts: ', postData.posts);
       });
 
-      this.userIsAuthenticated = this.authService.getIsAuth();
+    this.userIsAuthenticated = this.authService.getIsAuth();
 
-      this.authStatusSub = this.authService.getAuthStatusListener().subscribe((authStatus) => {
+    this.authStatusSub = this.authService
+      .getAuthStatusListener()
+      .subscribe((authStatus) => {
         (isAuthenticated: boolean) => {
           this.userIsAuthenticated = isAuthenticated;
-        }
-      })
+        };
+      });
   }
 
   onChangedPage(pageData: PageEvent) {
-    console.log('pageData', pageData);
+    // console.log('pageData', pageData);
     this.isLoading = true;
     this.currentPage = pageData.pageIndex + 1;
     this.postPerPage = pageData.pageSize;

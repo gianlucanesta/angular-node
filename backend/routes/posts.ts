@@ -109,7 +109,10 @@ router.put(
       });
 
       // Aggiorna il post nel database
-      await Post.updateOne({ _id: req.params['id'] }, post);
+      await Post.updateOne(
+        { _id: req.params['id'], creator: req.userData!.userId },
+        post
+      );
 
       return res.status(200).json({
         message: 'Post updated successfully',
