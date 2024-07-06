@@ -58,7 +58,7 @@ router.post('/login', (req: Request, res: Response, next: NextFunction) => {
 
       // Verify token content
       const decodedToken = jwt.verify(token, process.env['JWT_KEY'] as string);
-      console.log('Decoded Token:', decodedToken);
+      // console.log('Decoded Token:', decodedToken);
 
       return res.status(200).json({
         token: token,
