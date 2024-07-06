@@ -112,7 +112,16 @@ router.put(
       await Post.updateOne(
         { _id: req.params['id'], creator: req.userData!.userId },
         post
-      );
+      ).then((result: any) => {
+        // console.log(result);
+        if (result.modifiedCount > 0) {
+          return res.status(200).json({
+            message: 'Post updated successfully',
+          });
+        } else {
+          return res.status(401).json({ message: 'Not authorized' });
+        }
+      });
 
       return res.status(200).json({
         message: 'Post updated successfully',
@@ -179,9 +188,18 @@ router.delete(
       clearImage(path.basename(post.imagePath));
 
       // Elimina il documento del post dal database
-      await Post.deleteOne({ _id: post._id });
-
-      return res.status(200).json({ message: 'Post and image deleted!' });
+      await Post.deleteOne({
+        _id: post._id,
+        // _id: req.params['id'],
+        creator: req.userData!.userId,
+      }).then((result: any) => {
+        console.log(result);
+        if (result.deletedCount > 0) {
+          return res.status(200).json({ message: 'Post and image deleted!' });
+        } else {
+          return res.status(401).json({ message: 'Not authorized' });
+        }
+      });
     } catch (error) {
       console.error('Error deleting post:', error);
       return res.status(500).json({ message: 'Failed to delete post' });
