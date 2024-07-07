@@ -1,9 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import { ObjectId } from 'mongodb';
-import multer from 'multer';
 import fs from 'fs';
 import path from 'path';
-const isAuth = require('../middleware/is-auth');
 
 const Post = require('../models/post');
 
