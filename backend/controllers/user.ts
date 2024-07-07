@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const User = require('../models/user');
-require('dotenv').config();
 
 exports.createUser = (req: Request, res: Response, next: NextFunction) => {
   bcrypt.hash(req.body.password, 10).then(async (hash: any) => {
@@ -54,14 +53,11 @@ exports.userLogin = (req: Request, res: Response, next: NextFunction) => {
           email: fetchedUser.email,
           userId: fetchedUser._id,
         },
+
         process.env['JWT_KEY'] as string,
         { expiresIn: '1h' }
       );
       // console.log('Generated Token:', token);
-
-      // Verify token content
-      const decodedToken = jwt.verify(token, process.env['JWT_KEY'] as string);
-      // console.log('Decoded Token:', decodedToken);
 
       return res.status(200).json({
         token: token,

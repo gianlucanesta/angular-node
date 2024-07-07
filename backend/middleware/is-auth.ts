@@ -2,8 +2,6 @@ import { NextFunction, Response, Request } from 'express';
 
 const jwt = require('jsonwebtoken');
 
-require('dotenv').config();
-
 module.exports = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.get('Authorization');
   if (!authHeader) {

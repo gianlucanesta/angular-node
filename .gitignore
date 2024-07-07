@@ -43,3 +43,9 @@ Thumbs.db
 
 # Environment
 .env
+
+# Ignore nodemon.json
+/nodemon.json
+
+# Ignore environment.ts 
+/environment/environment.ts
