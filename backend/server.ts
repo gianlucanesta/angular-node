@@ -1,7 +1,7 @@
 import express from 'express';
 import debug from 'debug';
 import http from 'http';
-const app = require('./backend/app').default;
+const app = require('./app').default;
 
 const path = require('path');
 
