@@ -2,6 +2,8 @@ import express from 'express';
 import debug from 'debug';
 import http from 'http';
 const app = require('./app').default;
+const fs = require('fs');
+const https = require('https');
 
 const path = require('path');
 
@@ -13,6 +15,10 @@ const imagePath = path.join(__dirname, '../../backend/images');
 //   console.log(`Serving static file from: ${imagePath}`);
 //   next();
 // });
+
+const privateKey = fs.readFileSync('server.key', 'utf8');
+const certificate = fs.readFileSync('server.crt', 'utf8');
+const credentials = { key: privateKey, cert: certificate };
 
 // Configurazione del middleware statico
 app.use('/backend/images', express.static(imagePath));
@@ -50,7 +56,8 @@ const onListening = (): void => {
 const port = normalizePort(process.env['PORT'] || '3000');
 app.set('port', port);
 
-const server = http.createServer(app);
+const server = https.createServer(app, credentials);
+// const server = http.createServer(app);
 server.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
